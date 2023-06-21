@@ -79,6 +79,11 @@ bool ResourceBundleManifest::init()
     return ok;
 }
 
+bool ResourceBundleManifest::isInitialized()
+{
+    return !doc.documentElement().isNull();
+}
+
 bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *entry)
 {
     QDomElement root = doc.documentElement();

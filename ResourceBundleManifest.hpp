@@ -30,6 +30,7 @@ public:
     bool save();
     bool create();
     bool init();
+    bool isInitialized();
     bool findFileEntry(const QString &full_path, FileEntry *entry);
     bool addFileEntry(const FileEntry &entry);
     QSet<FileEntry> fileEntryList();

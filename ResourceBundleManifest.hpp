@@ -47,6 +47,7 @@ public:
 
     bool exists();
     bool load();
+    bool save();
     bool create();
     bool findFileEntry(const QString &full_path, FileEntry *entry);
     bool addFileEntry(const FileEntry &entry);

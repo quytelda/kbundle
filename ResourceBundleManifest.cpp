@@ -36,6 +36,18 @@ bool ResourceBundleManifest::load()
     return true;
 }
 
+bool ResourceBundleManifest::save() {
+    if (!manifestFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    QTextStream out(manifestFile);
+    doc.save(out, 1);
+    manifestFile->close();
+
+    return true;
+}
+
 bool ResourceBundleManifest::create()
 {
     return false;

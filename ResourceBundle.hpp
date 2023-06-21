@@ -19,6 +19,7 @@ public:
     ResourceBundle(const QString &path);
     ~ResourceBundle();
 
+    bool init();
     bool scanFiles();
 
 private:

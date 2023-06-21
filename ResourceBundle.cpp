@@ -12,9 +12,26 @@ ResourceBundle::~ResourceBundle()
     delete manifest;
 }
 
+bool ResourceBundle::init()
+{
+    if (!root->exists()) {
+        return false;
+    }
+
+    if (!manifest->init()) {
+        return false;
+    }
+
+    if (!this->scanFiles()) {
+        return false;
+    }
+
+    return true;
+}
+
 bool ResourceBundle::scanFiles()
 {
-    if (!root || !root->exists()) {
+    if (!root->exists()) {
         return false;
     }
 

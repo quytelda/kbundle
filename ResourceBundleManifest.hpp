@@ -37,6 +37,7 @@ class ResourceBundleManifest
 {
 public:
     ResourceBundleManifest(const QDir &root);
+    ResourceBundleManifest(const QString &manifestPath);
     ~ResourceBundleManifest();
 
     bool exists();

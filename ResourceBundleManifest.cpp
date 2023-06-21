@@ -6,6 +6,11 @@ ResourceBundleManifest::ResourceBundleManifest(const QDir &root)
     manifestFile = new QFile(manifestPath);
 }
 
+ResourceBundleManifest::ResourceBundleManifest(const QString &manifestPath)
+{
+    manifestFile = new QFile(manifestPath);
+}
+
 ResourceBundleManifest::~ResourceBundleManifest()
 {
     delete manifestFile;

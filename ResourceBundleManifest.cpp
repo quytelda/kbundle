@@ -118,7 +118,7 @@ bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *
 {
     if (!entry || elem.tagName() != TAG_FILE_ENTRY) {
         std::cerr << "Failed to parse file entry on line "
-                  << e.lineNumber()
+                  << elem.lineNumber()
                   << std::endl;
         return false;
     }

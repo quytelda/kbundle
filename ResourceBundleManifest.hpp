@@ -25,19 +25,6 @@ struct FileEntry {
     QString md5sum;
 };
 
-bool parseFileEntry(const QDomElement &elem, FileEntry *entry)
-{
-    if (elem.tagName() != TAG_FILE_ENTRY) {
-        return false;
-    }
-
-    entry->media_type = elem.attributeNS(MANIFEST_XMLNS, ATTR_MEDIA_TYPE);
-    entry->full_path  = elem.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
-    entry->md5sum     = elem.attributeNS(MANIFEST_XMLNS, ATTR_MD5SUM);
-
-    return true;
-}
-
 class ResourceBundleManifest
 {
 public:
@@ -54,6 +41,8 @@ public:
     bool save();
 
 private:
+    bool parseFileEntry(const QDomElement &elem, FileEntry *entry);
+
     QFile *manifestFile;
     QDomDocument doc;
 };

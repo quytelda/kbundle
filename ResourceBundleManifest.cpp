@@ -92,3 +92,19 @@ bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
 
     return true;
 }
+
+bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *entry)
+{
+    if (!entry || elem.tagName() != TAG_FILE_ENTRY) {
+        std::cerr << "Failed to parse file entry on line "
+                  << e.lineNumber()
+                  << std::endl;
+        return false;
+    }
+
+    entry->media_type = elem.attributeNS(MANIFEST_XMLNS, ATTR_MEDIA_TYPE);
+    entry->full_path  = elem.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
+    entry->md5sum     = elem.attributeNS(MANIFEST_XMLNS, ATTR_MD5SUM);
+
+    return true;
+}

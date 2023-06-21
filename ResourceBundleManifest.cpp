@@ -16,11 +16,6 @@ ResourceBundleManifest::~ResourceBundleManifest()
     delete manifestFile;
 }
 
-bool ResourceBundleManifest::exists()
-{
-    return manifestFile->exists();
-}
-
 bool ResourceBundleManifest::load()
 {
     if (!manifestFile->open(QIODevice::ReadOnly)) {

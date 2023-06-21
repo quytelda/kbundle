@@ -26,7 +26,6 @@ public:
     ResourceBundleManifest(const QString &manifestPath);
     ~ResourceBundleManifest();
 
-    bool exists();
     bool load();
     bool save();
     bool create();

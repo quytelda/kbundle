@@ -6,6 +6,11 @@
 #include <QtCore>
 #include <QtXml>
 
+#define FOREACH_CHILD_ELEMENT(parent, e)          \
+    for ((e) = (parent).firstChildElement();      \
+         !(e).isNull();                           \
+         (e) = (e).nextSiblingElement())
+
 #define MANIFEST_PATH "META-INF/manifest.xml"
 #define MANIFEST_XMLNS "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"
 

@@ -49,11 +49,8 @@ bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *
     }
 
     QDomElement e;
-    for (e = root.firstChildElement(); !e.isNull(); e = e.nextSiblingElement()) {
+    FOREACH_CHILD_ELEMENT(root, e) {
         if (!parseFileEntry(e, entry)) {
-            std::cerr << "Failed to parse file entry on line "
-                      << e.lineNumber()
-                      << std::endl;
             continue;
         }
 

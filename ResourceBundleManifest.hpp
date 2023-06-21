@@ -2,9 +2,9 @@
 #define __RESOURCE_BUNDLE_MANIFEST_HPP
 
 #include <iostream>
-
-#include <QtCore>
 #include <QtXml>
+
+#include "FileEntry.hpp"
 
 #define FOREACH_CHILD_ELEMENT(parent, e)          \
     for ((e) = (parent).firstChildElement();      \
@@ -18,12 +18,6 @@
 #define ATTR_MEDIA_TYPE "media-type"
 #define ATTR_FULL_PATH  "full-path"
 #define ATTR_MD5SUM     "md5sum"
-
-struct FileEntry {
-    QString full_path;
-    QString media_type;
-    QString md5sum;
-};
 
 class ResourceBundleManifest
 {

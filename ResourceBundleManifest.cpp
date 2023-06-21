@@ -66,6 +66,19 @@ bool ResourceBundleManifest::create()
     return true;
 }
 
+bool ResourceBundleManifest::init()
+{
+    bool ok;
+
+    if (manifestFile->exists()) {
+        ok = this->load();
+    } else {
+        ok = this->create();
+    }
+
+    return ok;
+}
+
 bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *entry)
 {
     QDomElement root = doc.documentElement();

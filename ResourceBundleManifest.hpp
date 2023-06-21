@@ -38,7 +38,7 @@ public:
     bool create();
     bool findFileEntry(const QString &full_path, FileEntry *entry);
     bool addFileEntry(const FileEntry &entry);
-    bool save();
+    QSet<FileEntry> fileEntryList();
 
 private:
     bool parseFileEntry(const QDomElement &elem, FileEntry *entry);

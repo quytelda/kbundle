@@ -74,6 +74,27 @@ bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *
     return false;
 }
 
+QSet<FileEntry> ResourceBundleManifest::fileEntryList()
+{
+    QSet<FileEntry> entries;
+
+    QDomElement root = doc.documentElement();
+    if (root.isNull()) {
+        return entries;
+    }
+
+    QDomElement e;
+    FOREACH_CHILD_ELEMENT(root, e) {
+        FileEntry entry;
+        if (!parseFileEntry(e, &entry)) {
+            continue;
+        }
+        entries << entry;
+    }
+
+    return entries;
+}
+
 bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
 {
     QDomElement root = doc.documentElement();

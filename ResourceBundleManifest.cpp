@@ -84,7 +84,7 @@ QSet<FileEntry> ResourceBundleManifest::fileEntryList()
         if (!parseFileEntry(e, &entry)) {
             continue;
         }
-        entries << entry;
+        entries.insert(entry);
     }
 
     return entries;

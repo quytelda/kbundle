@@ -45,7 +45,25 @@ bool ResourceBundleManifest::save() {
 
 bool ResourceBundleManifest::create()
 {
-    return false;
+    if (!doc.documentElement().isNull()) {
+        return false;
+    }
+
+    QDomElement root = doc.createElementNS(MANIFEST_XMLNS, "manifest:manifest");
+    root.setAttributeNS(MANIFEST_XMLNS, "manifest:version", "1.2");
+    doc.appendChild(root);
+
+    // A file entry for the bundle's root directory is always included.
+    //
+    // XXX: This should be implemented using namespaces formally.
+    // However the QtXML namespace-enabled functions insert redundant
+    // 'xmlns' attributes into every tag in the document.
+    QDomElement dirEntry = doc.createElement("manifest:" TAG_FILE_ENTRY);
+    dirEntry.setAttribute("manifest:" ATTR_MEDIA_TYPE, "application/x-krita-resourcebundle");
+    dirEntry.setAttribute("manifest:" ATTR_FULL_PATH , "/");
+    root.appendChild(dirEntry);
+
+    return true;
 }
 
 bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *entry)

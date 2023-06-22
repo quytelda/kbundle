@@ -75,7 +75,7 @@ bool ResourceBundle::updateManifest()
 
     QSet<FileEntry> fileEntries;
     for (QFileInfo fileInfo : resourceFiles) {
-        QString full_path  = fileInfo.filePath();
+        QString full_path  = root->relativeFilePath(fileInfo.filePath());
         QString media_type = fileInfo.dir().dirName();
         QString md5sum;
 

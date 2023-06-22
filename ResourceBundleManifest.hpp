@@ -15,6 +15,8 @@
 #define MANIFEST_XMLNS "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"
 
 #define TAG_FILE_ENTRY  "manifest:file-entry"
+#define TAG_TAGS        "manifest:tags"
+#define TAG_TAG         "manifest:tag"
 #define ATTR_MEDIA_TYPE "manifest:media-type"
 #define ATTR_FULL_PATH  "manifest:full-path"
 #define ATTR_MD5SUM     "manifest:md5sum"
@@ -34,6 +36,8 @@ public:
     bool findFileEntry(const QString &full_path, FileEntry *entry);
     bool addFileEntry(const FileEntry &entry);
     bool removeFileEntry(const QString &path);
+    bool addTag(const QString &path, const QString &tag);
+    bool removeTag(const QString &path, const QString &tagName);
     QSet<FileEntry> fileEntryList();
 
 private:

@@ -189,3 +189,46 @@ QDomElement ResourceBundleManifest::findEntry(const QString &path)
     // No matching entry was found.
     return QDomElement();
 }
+
+bool ResourceBundleManifest::addTag(const QString &path, const QString &tagName)
+{
+    QDomElement e = findEntry(path);
+    if (e.isNull()) {
+        return false;
+    }
+
+    QDomElement tagList = e.firstChildElement(TAG_TAGS);
+    if (tagList.isNull()) {
+        tagList = doc.createElement(TAG_TAGS);
+        e.appendChild(tagList);
+    }
+
+    QDomElement tag = doc.createElement(TAG_TAG);
+    tagList.appendChild(tag);
+    QDomText text = doc.createTextNode(tagName);
+    tag.appendChild(text);
+
+    return true;
+}
+
+bool ResourceBundleManifest::removeTag(const QString &path, const QString &tagName)
+{
+    QDomElement e = findEntry(path);
+    if (e.isNull()) {
+        return false;
+    }
+
+    QDomElement tagList = e.firstChildElement(TAG_TAGS);
+    if (tagList.isNull()) {
+        return false;
+    }
+
+    QDomElement t;
+    FOREACH_CHILD_ELEMENT(tagList, t) {
+        if (t.tagName() == TAG_TAG && t.text() == tagName) {
+            return !tagList.removeChild(t).isNull();
+        }
+    }
+
+    return false;
+}

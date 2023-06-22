@@ -14,10 +14,10 @@
 #define MANIFEST_PATH "META-INF/manifest.xml"
 #define MANIFEST_XMLNS "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"
 
-#define TAG_FILE_ENTRY  "file-entry"
-#define ATTR_MEDIA_TYPE "media-type"
-#define ATTR_FULL_PATH  "full-path"
-#define ATTR_MD5SUM     "md5sum"
+#define TAG_FILE_ENTRY  "manifest:file-entry"
+#define ATTR_MEDIA_TYPE "manifest:media-type"
+#define ATTR_FULL_PATH  "manifest:full-path"
+#define ATTR_MD5SUM     "manifest:md5sum"
 
 class ResourceBundleManifest
 {

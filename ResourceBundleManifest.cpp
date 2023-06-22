@@ -22,7 +22,7 @@ bool ResourceBundleManifest::load()
         return false;
     }
 
-    if (!doc.setContent(manifestFile, true)) {
+    if (!doc.setContent(manifestFile, false)) {
         manifestFile->close();
         return false;
     }
@@ -49,18 +49,14 @@ bool ResourceBundleManifest::create()
         return false;
     }
 
-    QDomElement root = doc.createElementNS(MANIFEST_XMLNS, "manifest:manifest");
-    root.setAttributeNS(MANIFEST_XMLNS, "manifest:version", "1.2");
+    QDomElement root = doc.createElement("manifest:manifest");
+    root.setAttribute("manifest:version", "1.2");
     doc.appendChild(root);
 
     // A file entry for the bundle's root directory is always included.
-    //
-    // XXX: This should be implemented using namespaces formally.
-    // However the QtXML namespace-enabled functions insert redundant
-    // 'xmlns' attributes into every tag in the document.
-    QDomElement dirEntry = doc.createElement("manifest:" TAG_FILE_ENTRY);
-    dirEntry.setAttribute("manifest:" ATTR_MEDIA_TYPE, "application/x-krita-resourcebundle");
-    dirEntry.setAttribute("manifest:" ATTR_FULL_PATH , "/");
+    QDomElement dirEntry = doc.createElement(TAG_FILE_ENTRY);
+    dirEntry.setAttribute(ATTR_MEDIA_TYPE, "application/x-krita-resourcebundle");
+    dirEntry.setAttribute(ATTR_FULL_PATH , "/");
     root.appendChild(dirEntry);
 
     return true;
@@ -122,13 +118,13 @@ bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
     // If not, create a new one.
     QDomElement e = this->findEntry(entry.full_path);
     if (e.isNull()) {
-        e = doc.createElementNS(MANIFEST_XMLNS, TAG_FILE_ENTRY);
+        e = doc.createElement(TAG_FILE_ENTRY);
         root.appendChild(e);
     }
 
-    e.setAttributeNS(MANIFEST_XMLNS, ATTR_MEDIA_TYPE, entry.media_type);
-    e.setAttributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH , entry.full_path);
-    e.setAttributeNS(MANIFEST_XMLNS, ATTR_MD5SUM    , entry.md5sum);
+    e.setAttribute(ATTR_MEDIA_TYPE, entry.media_type);
+    e.setAttribute(ATTR_FULL_PATH , entry.full_path);
+    e.setAttribute(ATTR_MD5SUM    , entry.md5sum);
 
     return true;
 }
@@ -152,9 +148,9 @@ bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *
         return false;
     }
 
-    entry->media_type = elem.attributeNS(MANIFEST_XMLNS, ATTR_MEDIA_TYPE);
-    entry->full_path  = elem.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
-    entry->md5sum     = elem.attributeNS(MANIFEST_XMLNS, ATTR_MD5SUM);
+    entry->media_type = elem.attribute(ATTR_MEDIA_TYPE);
+    entry->full_path  = elem.attribute(ATTR_FULL_PATH);
+    entry->md5sum     = elem.attribute(ATTR_MD5SUM);
 
     return true;
 }
@@ -173,7 +169,7 @@ QDomElement ResourceBundleManifest::findEntry(const QString &path)
             continue;
         }
 
-        full_path = e.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
+        full_path = e.attribute(ATTR_FULL_PATH);
         if (full_path == path) {
             return e;
         }

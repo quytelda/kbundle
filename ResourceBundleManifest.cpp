@@ -140,7 +140,7 @@ bool ResourceBundleManifest::removeFileEntry(const QString &path)
         return false;
     }
 
-    return !root.removeChild(e).isNull();
+    return !doc.documentElement().removeChild(e).isNull();
 }
 
 bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *entry)

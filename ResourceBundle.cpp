@@ -1,5 +1,20 @@
 #include "ResourceBundle.hpp"
 
+bool md5(QFile &file, QString *result)
+{
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    if(!hash.addData(&file)) {
+        return false;
+    }
+
+    *result = QString(hash.result().toHex());
+    return true;
+}
+
 ResourceBundle::ResourceBundle(const QString &path)
 {
     this->root = new QDir(path);

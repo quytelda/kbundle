@@ -88,5 +88,16 @@ bool ResourceBundle::updateManifest()
         fileEntries.insert(entry);
     }
 
+    // Remove manifest entries which have no matching file.
+    QSet<FileEntry> missingFiles = manifestEntries.subtract(fileEntries);
+    for (FileEntry entry : missingFiles) {
+        manifest->removeFileEntry(entry.full_path);
+    }
+
+    // Add or update manifest entries for each existing file.
+    for (FileEntry entry : fileEntries) {
+        manifest->addFileEntry(entry.full_path);
+    }
+
     return true;
 }

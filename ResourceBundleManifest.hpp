@@ -37,6 +37,7 @@ public:
     QSet<FileEntry> fileEntryList();
 
 private:
+    QDomElement findEntry(const QString &path);
     bool parseFileEntry(const QDomElement &elem, FileEntry *entry);
 
     QFile *manifestFile;

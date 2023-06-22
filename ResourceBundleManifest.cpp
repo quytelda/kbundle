@@ -179,3 +179,27 @@ bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *
 
     return true;
 }
+
+QDomElement ResourceBundleManifest::findEntry(const QString &path)
+{
+    QDomElement root = doc.documentElement();
+    if (root.isNull()) {
+        return QDomElement();
+    }
+
+    QDomElement e;
+    QString full_path;
+    FOREACH_CHILD_ELEMENT(root, e) {
+        if (e.tagName() != TAG_FILE_ENTRY) {
+            continue;
+        }
+
+        full_path = e.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
+        if (full_path == path) {
+            return e;
+        }
+    }
+
+    // No matching entry was found.
+    return QDomElement();
+}

@@ -11,16 +11,12 @@ struct FileEntry {
 
 inline bool operator==(const FileEntry &lhs, const FileEntry &rhs)
 {
-    return (lhs.full_path  == rhs.full_path)
-        && (lhs.media_type == rhs.media_type)
-        && (lhs.md5sum     == rhs.md5sum);
+    return (lhs.full_path == rhs.full_path);
 }
 
 inline uint qHash(const FileEntry &key, uint seed)
 {
-    return qHash(key.full_path , seed)
-        ^  qHash(key.media_type, seed)
-        ^  qHash(key.md5sum    , seed);
+    return qHash(key.full_path, seed);
 }
 
 #endif /* __FILE_ENTRY_HPP */

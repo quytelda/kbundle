@@ -102,7 +102,10 @@ QSet<FileEntry> ResourceBundleManifest::fileEntryList()
         if (!parseFileEntry(e, &entry)) {
             continue;
         }
-        entries.insert(entry);
+
+        if (entry.full_path != "/") {
+            entries.insert(entry);
+        }
     }
 
     return entries;

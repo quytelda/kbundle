@@ -32,4 +32,19 @@ private:
     QFileInfoList resourceFiles;
 };
 
+inline bool md5(QFile &file, QString *result)
+{
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    if(!hash.addData(&file)) {
+        return false;
+    }
+
+    *result = QString(hash.result().toHex());
+    return true;
+}
+
 #endif /* __RESOURCE_BUNDLE_HPP */

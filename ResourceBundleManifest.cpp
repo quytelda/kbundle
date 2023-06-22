@@ -86,23 +86,8 @@ bool ResourceBundleManifest::isInitialized()
 
 bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *entry)
 {
-    QDomElement root = doc.documentElement();
-    if(root.isNull()) {
-        return false;
-    }
-
-    QDomElement e;
-    FOREACH_CHILD_ELEMENT(root, e) {
-        if (!parseFileEntry(e, entry)) {
-            continue;
-        }
-
-        if (entry->full_path == full_path) {
-            return true;
-        }
-    }
-
-    return false;
+    QDomElement e = this->findEntry(full_path);
+    return parseFileEntry(e, entry);
 }
 
 QSet<FileEntry> ResourceBundleManifest::fileEntryList()
@@ -133,35 +118,29 @@ bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
         return false;
     }
 
-    QDomElement elem = doc.createElementNS(MANIFEST_XMLNS, TAG_FILE_ENTRY);
-    elem.setAttributeNS(MANIFEST_XMLNS, ATTR_MEDIA_TYPE, entry.media_type);
-    elem.setAttributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH , entry.full_path);
-    elem.setAttributeNS(MANIFEST_XMLNS, ATTR_MD5SUM    , entry.md5sum);
+    // Check whether this file already has an existing entry.
+    // If not, create a new one.
+    QDomElement e = this->findEntry(entry.full_path);
+    if (e.isNull()) {
+        e = doc.createElementNS(MANIFEST_XMLNS, TAG_FILE_ENTRY);
+        root.appendChild(e);
+    }
 
-    // TODO: Use QDomNode::insertAfter(newChild, refChild) to keep
-    // matching media-types together.
-    root.appendChild(elem);
+    e.setAttributeNS(MANIFEST_XMLNS, ATTR_MEDIA_TYPE, entry.media_type);
+    e.setAttributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH , entry.full_path);
+    e.setAttributeNS(MANIFEST_XMLNS, ATTR_MD5SUM    , entry.md5sum);
 
     return true;
 }
 
 bool ResourceBundleManifest::removeFileEntry(const QString &path)
 {
-    QDomElement root = doc.documentElement();
-    if (root.isNull()) {
+    QDomElement e = this->findEntry(path);
+    if (e.isNull()) {
         return false;
     }
 
-    QDomElement e;
-    FOREACH_CHILD_ELEMENT(root, e) {
-        QString full_path = e.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
-        if (full_path = path) {
-            return !root.removeChild(e).isNull();
-        }
-    }
-
-    // No matching entry was found.
-    return false;
+    return !root.removeChild(e).isNull();
 }
 
 bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *entry)

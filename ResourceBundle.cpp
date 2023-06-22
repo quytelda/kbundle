@@ -93,6 +93,9 @@ bool ResourceBundle::updateManifest()
     QSet<FileEntry> missingFiles = manifestEntries.subtract(fileEntries);
     for (FileEntry entry : missingFiles) {
         manifest->removeFileEntry(entry.full_path);
+        std::cout << "Removed manifest entry: "
+                  << qPrintable(entry.full_path)
+                  << std::endl;
     }
 
     // Add or update manifest entries for each existing file.

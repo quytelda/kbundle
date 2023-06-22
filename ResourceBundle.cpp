@@ -75,11 +75,12 @@ bool ResourceBundle::updateManifest()
 
     QSet<FileEntry> fileEntries;
     for (QFileInfo fileInfo : resourceFiles) {
-        QString full_path  = root->relativeFilePath(fileInfo.filePath());
+        QString absolutePath = fileInfo.filePath();
+        QString full_path  = root->relativeFilePath(absolutePath);
         QString media_type = fileInfo.dir().dirName();
         QString md5sum;
 
-        QFile file(full_path);
+        QFile file(absolutePath);
         if (!md5(file, &md5sum)) {
             return false;
         }
@@ -96,8 +97,8 @@ bool ResourceBundle::updateManifest()
 
     // Add or update manifest entries for each existing file.
     for (FileEntry entry : fileEntries) {
-        manifest->addFileEntry(entry.full_path);
+        manifest->addFileEntry(entry);
     }
 
-    return true;
+    return manifest->save();
 }

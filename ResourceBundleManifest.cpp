@@ -133,9 +133,9 @@ bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
         root.appendChild(e);
     }
 
-    e.setAttribute(ATTR_MEDIA_TYPE, entry.media_type);
-    e.setAttribute(ATTR_FULL_PATH , entry.full_path);
     e.setAttribute(ATTR_MD5SUM    , entry.md5sum);
+    e.setAttribute(ATTR_FULL_PATH , entry.full_path);
+    e.setAttribute(ATTR_MEDIA_TYPE, entry.media_type);
 
     return true;
 }

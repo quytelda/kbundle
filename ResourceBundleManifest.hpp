@@ -33,6 +33,7 @@ public:
     bool isInitialized();
     bool findFileEntry(const QString &full_path, FileEntry *entry);
     bool addFileEntry(const FileEntry &entry);
+    bool removeFileEntry(const QString &path);
     QSet<FileEntry> fileEntryList();
 
 private:

@@ -145,6 +145,25 @@ bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
     return true;
 }
 
+bool ResourceBundleManifest::removeFileEntry(const QString &path)
+{
+    QDomElement root = doc.documentElement();
+    if (root.isNull()) {
+        return false;
+    }
+
+    QDomElement e;
+    FOREACH_CHILD_ELEMENT(root, e) {
+        QString full_path = e.attributeNS(MANIFEST_XMLNS, ATTR_FULL_PATH);
+        if (full_path = path) {
+            return !root.removeChild(e).isNull();
+        }
+    }
+
+    // No matching entry was found.
+    return false;
+}
+
 bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *entry)
 {
     if (!entry || elem.tagName() != TAG_FILE_ENTRY) {

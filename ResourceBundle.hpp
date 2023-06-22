@@ -21,6 +21,7 @@ public:
 
     bool init();
     bool scanFiles();
+    bool updateManifest();
 
 private:
     QDir *root;

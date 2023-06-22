@@ -61,3 +61,32 @@ bool ResourceBundle::scanFiles()
 
     return true;
 }
+
+bool ResourceBundle::updateManifest()
+{
+    if (resourceFiles.size() <= 0) {
+        return false;
+    }
+
+    if (!manifest->isInitialized()) {
+        return false;
+    }
+    QSet<FileEntry> manifestEntries = manifest->fileEntryList();
+
+    QSet<FileEntry> fileEntries;
+    for (QFileInfo fileInfo : resourceFiles) {
+        QString full_path  = fileInfo.filePath();
+        QString media_type = fileInfo.dir().dirName();
+        QString md5sum;
+
+        QFile file(full_path);
+        if (!md5(file, &md5sum)) {
+            return false;
+        }
+
+        FileEntry entry = { full_path, media_type, md5sum };
+        fileEntries.insert(entry);
+    }
+
+    return true;
+}

@@ -23,6 +23,8 @@ public:
     bool init();
     bool scanFiles();
     bool updateManifest();
+    bool addTag(const QString &path, const QString &tagName);
+    bool removeTag(const QString &path, const QString &tagName);
 
 private:
     QDir *root;

@@ -40,6 +40,7 @@ private:
     QDomElement findEntry(const QString &path);
     bool parseFileEntry(const QDomElement &elem, FileEntry *entry);
 
+    const QDir bundleRoot;
     QFile *manifestFile;
     QDomDocument doc;
 };

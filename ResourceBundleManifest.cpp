@@ -1,6 +1,7 @@
 #include "ResourceBundleManifest.hpp"
 
 ResourceBundleManifest::ResourceBundleManifest(const QDir &root)
+    : bundleRoot(root)
 {
     QString manifestPath = root.absoluteFilePath(MANIFEST_PATH);
     manifestFile = new QFile(manifestPath);
@@ -31,7 +32,13 @@ bool ResourceBundleManifest::load()
     return true;
 }
 
-bool ResourceBundleManifest::save() {
+bool ResourceBundleManifest::save()
+{
+    if (!bundleRoot.exists("META-INF") &&
+        !bundleRoot.mkdir("META-INF")) {
+        return false;
+    }
+
     if (!manifestFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }

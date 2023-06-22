@@ -19,4 +19,11 @@ inline uint qHash(const FileEntry &key, uint seed)
     return qHash(key.full_path, seed);
 }
 
+inline const char *showFileEntry(const FileEntry &entry)
+{
+    return qPrintable(entry.full_path  + ":" +
+                      entry.media_type + ":" +
+                      entry.md5sum);
+}
+
 #endif /* __FILE_ENTRY_HPP */

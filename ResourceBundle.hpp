@@ -11,6 +11,7 @@ const QStringList resourceDirNames = {
     "brushes",
     "paintoppresets",
     "patterns",
+    "workspaces",
 };
 
 class ResourceBundle

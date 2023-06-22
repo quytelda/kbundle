@@ -50,6 +50,7 @@ bool ResourceBundleManifest::create()
     }
 
     QDomElement root = doc.createElement("manifest:manifest");
+    root.setAttribute("xmlns:manifest", MANIFEST_XMLNS);
     root.setAttribute("manifest:version", "1.2");
     doc.appendChild(root);
 

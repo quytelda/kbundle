@@ -9,8 +9,12 @@
 
 const QStringList resourceDirNames = {
     "brushes",
+    "gamutmasks",
+    "gradients",
     "paintoppresets",
+    "palettes",
     "patterns",
+    "seexpr_scripts",
     "workspaces",
 };
 

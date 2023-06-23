@@ -5,7 +5,9 @@
 int main(int argc, char** argv)
 {
     if (argc < 3) {
-        std::cerr << "Missing arguments: <COMMAND> [ARGS...] <PATH>" << std::endl;
+        std::cerr << "Not enough arguments!\n"
+                  << "Usage: kbundle <COMMAND> [ARGS...] <PATH>"
+                  << std::endl;
         return 1;
     }
 
@@ -14,7 +16,10 @@ int main(int argc, char** argv)
 
     ResourceBundle bundle(path);
     if (!bundle.init()) {
-        return false;
+        std::cerr << "Unable to load bundle from path: "
+                  << qPrintable(path)
+                  << std::endl;
+        return 2;
     }
 
     bool ok;
@@ -31,5 +36,5 @@ int main(int argc, char** argv)
                   << std::endl;
     }
 
-    return ok ? 0 : 1;
+    return ok ? 0 : 3;
 }

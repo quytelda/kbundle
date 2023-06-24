@@ -31,8 +31,10 @@ public:
     bool removeTag(const QString &path, const QString &tagName);
 
 private:
-    QDir *root;
-    ResourceBundleManifest *manifest;
+    QString bundlePath(const QString &path);
+
+    QDir *root = nullptr;
+    ResourceBundleManifest *manifest = nullptr;
     QFileInfoList resourceFiles;
 };
 

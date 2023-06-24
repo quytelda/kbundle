@@ -102,3 +102,8 @@ bool ResourceBundle::removeTag(const QString &path, const QString &tagName)
     return manifest->removeTag(path, tagName)
         && manifest->save();
 }
+
+QString ResourceBundle::bundlePath(const QString &path)
+{
+    return root->relativeFilePath(path);
+}

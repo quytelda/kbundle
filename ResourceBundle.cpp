@@ -104,6 +104,53 @@ bool ResourceBundle::removeTag(const QString &path, const QString &tagName)
         && manifest->save();
 }
 
+bool ResourceBundle::build(const QString &path)
+{
+    if (archive) {
+        return false;
+    }
+
+    archive = new QuaZip(path);
+    if (!archive->open(QuaZip::mdCreate)) {
+        std::cerr << "Failed to create ZIP archive: "
+                  << qPrintable(path)
+                  << std::endl;
+        return false;
+    }
+
+    bool ok = false;
+
+    if (!zipAddFile("mimetype")) {
+        goto exit;
+    }
+
+    for (QFileInfo resourceInfo : resourceFiles) {
+        QString resourcePath = bundlePath(resourceInfo.filePath());
+        if (!zipAddFile(resourcePath)) {
+            goto exit;
+        }
+    }
+
+    if (!zipAddFile("preview.png")) {
+        goto exit;
+    }
+
+    if (!zipAddFile("META-INF/manifest.xml")) {
+        goto exit;
+    }
+
+    if (!zipAddFile("meta.xml")) {
+        goto exit;
+    }
+
+    // Success
+    ok = true;
+
+exit:
+    archive->close();
+    return ok;
+}
+
 QString ResourceBundle::bundlePath(const QString &path)
 {
     return root->relativeFilePath(path);

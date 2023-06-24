@@ -35,6 +35,7 @@ public:
     bool updateManifest();
     bool addTag(const QString &path, const QString &tagName);
     bool removeTag(const QString &path, const QString &tagName);
+    bool build(const QString &path);
 
 private:
     QString bundlePath(const QString &path);

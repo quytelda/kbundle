@@ -10,6 +10,7 @@ ResourceBundle::~ResourceBundle()
 {
     delete root;
     delete manifest;
+    delete archive;
 }
 
 bool ResourceBundle::init()
@@ -106,4 +107,18 @@ bool ResourceBundle::removeTag(const QString &path, const QString &tagName)
 QString ResourceBundle::bundlePath(const QString &path)
 {
     return root->relativeFilePath(path);
+}
+
+bool ResourceBundle::zipAddFile(const QString &path)
+{
+    if (!archive || archive->getMode() == QuaZip::mdNotOpen) {
+        return false;
+    }
+
+    QString fullPath = root->filePath(path);
+    if (!QFileInfo::exists(fullPath)) {
+        return false;
+    }
+
+    return JlCompress::compressFile(archive, fullPath, path);
 }

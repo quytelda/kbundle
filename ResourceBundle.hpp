@@ -2,6 +2,12 @@
 #define __RESOURCE_BUNDLE_HPP
 
 #include <iostream>
+
+#include <quazip/quazip.h>
+#include <quazip/quazipfile.h>
+#include <quazipnewinfo.h>
+#include <JlCompress.h>
+
 #include <QtCore>
 #include <QtXml>
 
@@ -33,9 +39,12 @@ public:
 private:
     QString bundlePath(const QString &path);
 
+    bool zipAddFile(const QString &path);
+
     QDir *root = nullptr;
     ResourceBundleManifest *manifest = nullptr;
     QFileInfoList resourceFiles;
+    QuaZip *archive = nullptr;
 };
 
 inline bool md5(QFile &file, QString *result)

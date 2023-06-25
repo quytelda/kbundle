@@ -125,7 +125,7 @@ bool ResourceBundle::build(const QString &path)
     }
 
     for (QFileInfo resourceInfo : resourceFiles) {
-        QString resourcePath = bundlePath(resourceInfo.filePath());
+        QString resourcePath = pathInBundle(resourceInfo.filePath());
         if (!zipAddFile(resourcePath)) {
             goto exit;
         }
@@ -151,7 +151,12 @@ exit:
     return ok;
 }
 
-QString ResourceBundle::bundlePath(const QString &path)
+QString ResourceBundle::filePath(const QString &path)
+{
+    return root->filePath(path);
+}
+
+QString ResourceBundle::pathInBundle(const QString &path)
 {
     return root->relativeFilePath(path);
 }
@@ -162,7 +167,7 @@ bool ResourceBundle::zipAddFile(const QString &path)
         return false;
     }
 
-    QString fullPath = root->filePath(path);
+    QString fullPath = filePath(path);
     if (!QFileInfo::exists(fullPath)) {
         return false;
     }

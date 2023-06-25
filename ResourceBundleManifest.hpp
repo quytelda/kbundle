@@ -33,7 +33,6 @@ public:
     bool create();
     bool init();
     bool isInitialized();
-    bool findFileEntry(const QString &full_path, FileEntry *entry);
     bool addFileEntry(const FileEntry &entry);
     bool removeFileEntry(const QString &path);
     bool addTag(const QString &path, const QString &tag);

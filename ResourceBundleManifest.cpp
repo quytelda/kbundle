@@ -88,12 +88,6 @@ bool ResourceBundleManifest::isInitialized()
     return !doc.documentElement().isNull();
 }
 
-bool ResourceBundleManifest::findFileEntry(const QString &full_path, FileEntry *entry)
-{
-    QDomElement e = this->findEntry(full_path);
-    return parseFileEntry(e, entry);
-}
-
 QSet<FileEntry> ResourceBundleManifest::fileEntryList()
 {
     QSet<FileEntry> entries;

@@ -1,64 +1,74 @@
 #include "ResourceBundleManifest.hpp"
 
-ResourceBundleManifest::ResourceBundleManifest(const QDir &root)
-    : bundleRoot(root)
-{
-    QString manifestPath = root.absoluteFilePath(MANIFEST_PATH);
-    manifestFile = new QFile(manifestPath);
-}
-
 ResourceBundleManifest::ResourceBundleManifest(const QString &manifestPath)
+    : manifestFile(manifestPath)
 {
-    manifestFile = new QFile(manifestPath);
-}
-
-ResourceBundleManifest::~ResourceBundleManifest()
-{
-    delete manifestFile;
 }
 
 bool ResourceBundleManifest::load()
 {
-    if (!manifestFile->open(QIODevice::ReadOnly)) {
+    if (!manifestFile.open(QIODevice::ReadOnly)) {
+        std::cerr << "Failed to open manifest file: "
+                  << qPrintable(manifestFile.fileName())
+                  << std::endl;
         return false;
     }
 
-    if (!doc.setContent(manifestFile, false)) {
-        manifestFile->close();
+    QDomDocument doc;
+    if (!doc.setContent(&manifestFile, false)) {
+        std::cerr << "Failed to parse manifest XML." << std::endl;
+        manifestFile.close();
         return false;
     }
-    manifestFile->close();
+    manifestFile.close();
+
+    QDomElement root = doc.documentElement();
+    if (root.tagName() != TAG_MANIFEST ||
+        root.attribute(ATTR_VERSION) != "1.2") {
+        std::cerr << "Invalid manifest or unsupported version." << std::endl;
+        return false;
+    }
+
+    QDomElement e;
+    FOREACH_CHILD_ELEMENT(root, e) {
+        FileEntry entry;
+        if (!fileEntryFromXML(e, &entry)) {
+            return false;
+        }
+
+        // Skip entry for bundle root that is always present.
+        if (entry.path == "/") {
+            continue;
+        }
+
+        entries.insert(entry.path, entry);
+    }
 
     return true;
 }
 
 bool ResourceBundleManifest::save()
 {
-    if (!bundleRoot.exists("META-INF") &&
-        !bundleRoot.mkdir("META-INF")) {
+    if (!manifestFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        std::cerr << "Failed to open manifest file for writing." << std::endl;
         return false;
     }
 
-    if (!manifestFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
-        return false;
-    }
-
-    QTextStream out(manifestFile);
+    QDomDocument doc = toXML();
+    QTextStream out(&manifestFile);
     doc.save(out, 1);
-    manifestFile->close();
+    manifestFile.close();
 
     return true;
 }
 
-bool ResourceBundleManifest::create()
+QDomDocument ResourceBundleManifest::toXML()
 {
-    if (!doc.documentElement().isNull()) {
-        return false;
-    }
+    QDomDocument doc;
 
-    QDomElement root = doc.createElement("manifest:manifest");
+    QDomElement root = doc.createElement(TAG_MANIFEST);
     root.setAttribute("xmlns:manifest", MANIFEST_XMLNS);
-    root.setAttribute("manifest:version", "1.2");
+    root.setAttribute(ATTR_VERSION, "1.2");
     doc.appendChild(root);
 
     // A file entry for the bundle's root directory is always included.
@@ -67,84 +77,65 @@ bool ResourceBundleManifest::create()
     dirEntry.setAttribute(ATTR_FULL_PATH , "/");
     root.appendChild(dirEntry);
 
+    for (FileEntry entry : entries) {
+        QDomElement entryElem = fileEntryToXML(doc, entry);
+        root.appendChild(entryElem);
+    }
+
+    return doc;
+}
+
+bool ResourceBundleManifest::addTag(const QString &path, const QString &tag)
+{
+    if (!entries.contains(path)) {
+        return false;
+    }
+
+    FileEntry &entry = entries[path];
+
+    if (entry.tags.contains(tag)) {
+        return false;
+    }
+    entry.tags.append(tag);
+
     return true;
 }
 
-bool ResourceBundleManifest::init()
+bool ResourceBundleManifest::removeTag(const QString &path, const QString &tag)
 {
-    bool ok;
-
-    if (manifestFile->exists()) {
-        ok = this->load();
-    } else {
-        ok = this->create();
+    if (!entries.contains(path)) {
+        return false;
     }
 
-    return ok;
+    return entries[path].tags.removeOne(tag);
 }
 
-bool ResourceBundleManifest::isInitialized()
-{
-    return !doc.documentElement().isNull();
-}
 
-QSet<FileEntry> ResourceBundleManifest::fileEntryList()
+bool ResourceBundleManifest::tagListFromXML(const QDomElement &elem, QStringList *tagList)
 {
-    QSet<FileEntry> entries;
-
-    QDomElement root = doc.documentElement();
-    if (root.isNull()) {
-        return entries;
+    QDomElement tagsElem = elem.firstChildElement(TAG_TAGS);
+    if (tagsElem.isNull()) {
+        return true;
     }
 
     QDomElement e;
-    FOREACH_CHILD_ELEMENT(root, e) {
-        FileEntry entry;
-        if (!parseFileEntry(e, &entry)) {
-            continue;
+    FOREACH_CHILD_ELEMENT(tagsElem, e) {
+        if (e.tagName() != TAG_TAG) {
+            return false;
         }
 
-        if (entry.full_path != "/") {
-            entries.insert(entry);
+        QString tag = e.text();
+        if (tag.isNull()) {
+            return false;
         }
+
+        tagList->append(tag);
     }
-
-    return entries;
-}
-
-bool ResourceBundleManifest::addFileEntry(const FileEntry &entry)
-{
-    QDomElement root = doc.documentElement();
-    if (root.isNull()) {
-        return false;
-    }
-
-    // Check whether this file already has an existing entry.
-    // If not, create a new one.
-    QDomElement e = this->findEntry(entry.full_path);
-    if (e.isNull()) {
-        e = doc.createElement(TAG_FILE_ENTRY);
-        root.appendChild(e);
-    }
-
-    e.setAttribute(ATTR_MD5SUM    , entry.md5sum);
-    e.setAttribute(ATTR_FULL_PATH , entry.full_path);
-    e.setAttribute(ATTR_MEDIA_TYPE, entry.media_type);
 
     return true;
 }
 
-bool ResourceBundleManifest::removeFileEntry(const QString &path)
-{
-    QDomElement e = this->findEntry(path);
-    if (e.isNull()) {
-        return false;
-    }
-
-    return !doc.documentElement().removeChild(e).isNull();
-}
-
-bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *entry)
+bool ResourceBundleManifest::fileEntryFromXML(const QDomElement &elem, FileEntry *entry)
 {
     if (!entry || elem.tagName() != TAG_FILE_ENTRY) {
         std::cerr << "Failed to parse file entry on line "
@@ -153,83 +144,45 @@ bool ResourceBundleManifest::parseFileEntry(const QDomElement &elem, FileEntry *
         return false;
     }
 
-    entry->media_type = elem.attribute(ATTR_MEDIA_TYPE);
-    entry->full_path  = elem.attribute(ATTR_FULL_PATH);
-    entry->md5sum     = elem.attribute(ATTR_MD5SUM);
+    entry->mediaType = elem.attribute(ATTR_MEDIA_TYPE);
+    entry->path      = elem.attribute(ATTR_FULL_PATH);
+    entry->md5sum    = elem.attribute(ATTR_MD5SUM);
+
+    QStringList tagList;
+    if (!tagListFromXML(elem, &tagList)) {
+        return false;
+    }
+    entry->tags = tagList;
 
     return true;
 }
 
-QDomElement ResourceBundleManifest::findEntry(const QString &path)
+QDomElement ResourceBundleManifest::tagListToXML(QDomDocument &doc, const QStringList &tagList)
 {
-    QDomElement root = doc.documentElement();
-    if (root.isNull()) {
-        return QDomElement();
+    QDomElement tagsElem = doc.createElement(TAG_TAGS);
+
+    for (QString tag : tagList) {
+        QDomElement tagElem = doc.createElement(TAG_TAG);
+        QDomText    tagText = doc.createTextNode(tag);
+        tagElem.appendChild(tagText);
+        tagsElem.appendChild(tagElem);
     }
 
-    QDomElement e;
-    QString full_path;
-    FOREACH_CHILD_ELEMENT(root, e) {
-        if (e.tagName() != TAG_FILE_ENTRY) {
-            continue;
-        }
-
-        full_path = e.attribute(ATTR_FULL_PATH);
-        if (full_path == path) {
-            return e;
-        }
-    }
-
-    // No matching entry was found.
-    return QDomElement();
+    return tagsElem;
 }
 
-bool ResourceBundleManifest::addTag(const QString &path, const QString &tagName)
+QDomElement ResourceBundleManifest::fileEntryToXML(QDomDocument &doc, const FileEntry &entry)
 {
-    QDomElement e = findEntry(path);
-    if (e.isNull()) {
-        return false;
+    QDomElement entryElem = doc.createElement(TAG_FILE_ENTRY);
+
+    entryElem.setAttribute(ATTR_MEDIA_TYPE, entry.mediaType);
+    entryElem.setAttribute(ATTR_FULL_PATH , entry.path);
+    entryElem.setAttribute(ATTR_MD5SUM    , entry.md5sum);
+
+    if (!entry.tags.isEmpty()) {
+        QDomElement tagsElem = tagListToXML(doc, entry.tags);
+        entryElem.appendChild(tagsElem);
     }
 
-    QDomElement tagList = e.firstChildElement(TAG_TAGS);
-    if (tagList.isNull()) {
-        tagList = doc.createElement(TAG_TAGS);
-        e.appendChild(tagList);
-    }
-
-    QDomElement tag = doc.createElement(TAG_TAG);
-    tagList.appendChild(tag);
-    QDomText text = doc.createTextNode(tagName);
-    tag.appendChild(text);
-
-    return true;
-}
-
-bool ResourceBundleManifest::removeTag(const QString &path, const QString &tagName)
-{
-    QDomElement e = findEntry(path);
-    if (e.isNull()) {
-        return false;
-    }
-
-    QDomElement tagList = e.firstChildElement(TAG_TAGS);
-    if (tagList.isNull()) {
-        return false;
-    }
-
-    bool ok = false;
-    QDomElement t;
-    FOREACH_CHILD_ELEMENT(tagList, t) {
-        if (t.tagName() == TAG_TAG && t.text() == tagName) {
-            ok = !tagList.removeChild(t).isNull();
-        }
-    }
-
-    // Manifests generated by Krita don't include empty tag lists, so
-    // remove the tag list if it is empty.
-    if (!tagList.hasChildNodes()) {
-        e.removeChild(tagList);
-    }
-
-    return ok;
+    return entryElem;
 }

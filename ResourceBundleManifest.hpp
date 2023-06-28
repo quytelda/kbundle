@@ -14,9 +14,11 @@
 #define MANIFEST_PATH "META-INF/manifest.xml"
 #define MANIFEST_XMLNS "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"
 
+#define TAG_MANIFEST    "manifest:manifest"
 #define TAG_FILE_ENTRY  "manifest:file-entry"
 #define TAG_TAGS        "manifest:tags"
 #define TAG_TAG         "manifest:tag"
+#define ATTR_VERSION    "manifest:version"
 #define ATTR_MEDIA_TYPE "manifest:media-type"
 #define ATTR_FULL_PATH  "manifest:full-path"
 #define ATTR_MD5SUM     "manifest:md5sum"
@@ -24,28 +26,22 @@
 class ResourceBundleManifest
 {
 public:
-    ResourceBundleManifest(const QDir &root);
     ResourceBundleManifest(const QString &manifestPath);
-    ~ResourceBundleManifest();
 
     bool load();
     bool save();
-    bool create();
-    bool init();
-    bool isInitialized();
-    bool addFileEntry(const FileEntry &entry);
-    bool removeFileEntry(const QString &path);
-    bool addTag(const QString &path, const QString &tag);
-    bool removeTag(const QString &path, const QString &tagName);
-    QSet<FileEntry> fileEntryList();
+    bool addTag   (const QString &path, const QString &tag);
+    bool removeTag(const QString &path, const QString &tag);
+    QDomDocument toXML();
 
 private:
-    QDomElement findEntry(const QString &path);
-    bool parseFileEntry(const QDomElement &elem, FileEntry *entry);
+    bool tagListFromXML(const QDomElement &elem, QStringList *tagList);
+    bool fileEntryFromXML(const QDomElement &elem, FileEntry *entry);
+    QDomElement tagListToXML(QDomDocument &doc, const QStringList &tagList);
+    QDomElement fileEntryToXML(QDomDocument &doc, const FileEntry &entry);
 
-    const QDir bundleRoot;
-    QFile *manifestFile;
-    QDomDocument doc;
+    QFile manifestFile;
+    QMap<QString, FileEntry> entries;
 };
 
 #endif /* __RESOURCE_BUNDLE_MANIFEST_HPP */

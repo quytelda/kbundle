@@ -33,6 +33,7 @@ public:
     bool addTag   (const QString &path, const QString &tag);
     bool removeTag(const QString &path, const QString &tag);
     QDomDocument toXML();
+    QSet<QString> resourceList();
 
 private:
     bool tagListFromXML(const QDomElement &elem, QStringList *tagList);

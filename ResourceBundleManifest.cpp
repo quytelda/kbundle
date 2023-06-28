@@ -85,6 +85,11 @@ QDomDocument ResourceBundleManifest::toXML()
     return doc;
 }
 
+QSet<QString> ResourceBundleManifest::resourceList()
+{
+    return QSet<QString>(entries.keyBegin(), entries.keyEnd());
+}
+
 bool ResourceBundleManifest::addTag(const QString &path, const QString &tag)
 {
     if (!entries.contains(path)) {

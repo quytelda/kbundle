@@ -44,6 +44,9 @@ int main(int argc, char** argv)
     bool ok;
     if (command == "update") {
         ok = bundle.updateManifest();
+    } else if (command == "build") {
+        REQUIRE_ARGS(1, args);
+        ok = bundle.build(args[0]);
     } else if (command == "add-tag") {
         REQUIRE_ARGS(2, args);
         ok = bundle.addTag(args[1], args[0]);

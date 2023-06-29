@@ -32,6 +32,7 @@ public:
 
     bool scanFiles();
     bool loadManifest();
+    bool saveManifest();
     bool updateManifest();
     bool addTag   (const QString &rpath, const QString &tagName);
     bool removeTag(const QString &rpath, const QString &tagName);

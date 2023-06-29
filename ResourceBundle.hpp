@@ -30,16 +30,16 @@ public:
     ResourceBundle(const QString &path);
     ~ResourceBundle();
 
-    bool init();
     bool scanFiles();
+    bool loadManifest();
     bool updateManifest();
-    bool addTag(const QString &path, const QString &tagName);
-    bool removeTag(const QString &path, const QString &tagName);
+    bool addTag   (const QString &rpath, const QString &tagName);
+    bool removeTag(const QString &rpath, const QString &tagName);
     bool build(const QString &path);
 
 private:
-    QString filePath(const QString &path);
-    QString pathInBundle(const QString &path);
+    QString filePath    (const QString &rpath);
+    QString resourcePath(const QString &path);
 
     bool zipAddFile(const QString &path);
 

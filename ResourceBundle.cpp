@@ -3,7 +3,9 @@
 ResourceBundle::ResourceBundle(const QString &path)
 {
     this->root = new QDir(path);
-    this->manifest = new ResourceBundleManifest(*this->root);
+
+    QString manifestPath = root->filePath(MANIFEST_PATH);
+    this->manifest = new ResourceBundleManifest(manifestPath);
 }
 
 ResourceBundle::~ResourceBundle()
@@ -13,21 +15,13 @@ ResourceBundle::~ResourceBundle()
     delete archive;
 }
 
-bool ResourceBundle::init()
+bool ResourceBundle::loadManifest()
 {
-    if (!root->exists()) {
+    if (!manifest->exists()) {
         return false;
     }
 
-    if (!manifest->init()) {
-        return false;
-    }
-
-    if (!this->scanFiles()) {
-        return false;
-    }
-
-    return true;
+    return manifest->load();
 }
 
 bool ResourceBundle::scanFiles()
@@ -54,39 +48,28 @@ bool ResourceBundle::updateManifest()
         return false;
     }
 
-    if (!manifest->isInitialized()) {
-        return false;
-    }
-    QSet<FileEntry> manifestEntries = manifest->fileEntryList();
+    manifest->clear();
 
-    QSet<FileEntry> fileEntries;
-    for (QFileInfo fileInfo : resourceFiles) {
-        QString absolutePath = fileInfo.filePath();
-        QString full_path  = root->relativeFilePath(absolutePath);
-        QString media_type = fileInfo.dir().dirName();
+    for (QFileInfo info : resourceFiles) {
+        QString filePath  = info.filePath();
+        QString mediaType = info.dir().dirName();
+        QString path      = resourcePath(filePath);
         QString md5sum;
 
-        QFile file(absolutePath);
+        QFile file(filePath);
         if (!md5(file, &md5sum)) {
             return false;
         }
 
-        FileEntry entry = { full_path, media_type, md5sum };
-        fileEntries.insert(entry);
-    }
-
-    // Remove manifest entries which have no matching file.
-    QSet<FileEntry> missingFiles = manifestEntries.subtract(fileEntries);
-    for (FileEntry entry : missingFiles) {
-        manifest->removeFileEntry(entry.full_path);
-        std::cout << "Removed manifest entry: "
-                  << qPrintable(entry.full_path)
-                  << std::endl;
-    }
-
-    // Add or update manifest entries for each existing file.
-    for (FileEntry entry : fileEntries) {
-        manifest->addFileEntry(entry);
+        FileEntry entry = {
+            .path      = path,
+            .mediaType = mediaType,
+            .md5sum    = md5sum,
+            .tags      = QStringList(),
+        };
+        if (!manifest->addEntry(entry)) {
+            return false;
+        }
     }
 
     return manifest->save();
@@ -124,9 +107,9 @@ bool ResourceBundle::build(const QString &path)
         goto exit;
     }
 
-    for (QFileInfo resourceInfo : resourceFiles) {
-        QString resourcePath = pathInBundle(resourceInfo.filePath());
-        if (!zipAddFile(resourcePath)) {
+    for (QFileInfo info : resourceFiles) {
+        QString rpath = resourcePath(info.filePath());
+        if (!zipAddFile(rpath)) {
             goto exit;
         }
     }
@@ -151,12 +134,12 @@ exit:
     return ok;
 }
 
-QString ResourceBundle::filePath(const QString &path)
+QString ResourceBundle::filePath(const QString &rpath)
 {
-    return root->filePath(path);
+    return root->filePath(rpath);
 }
 
-QString ResourceBundle::pathInBundle(const QString &path)
+QString ResourceBundle::resourcePath(const QString &path)
 {
     return root->relativeFilePath(path);
 }

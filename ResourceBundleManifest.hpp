@@ -31,6 +31,7 @@ public:
     bool exists();
     bool load();
     bool save();
+    void clear();
     bool addEntry(const FileEntry &entry);
     bool removeEntry(const QString &path);
     bool addTag   (const QString &path, const QString &tag);

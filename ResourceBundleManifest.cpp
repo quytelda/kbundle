@@ -67,6 +67,11 @@ bool ResourceBundleManifest::save()
     return true;
 }
 
+void ResourceBundleManifest::clear()
+{
+    entries.clear();
+}
+
 bool ResourceBundleManifest::addEntry(const FileEntry &entry)
 {
     if (entries.contains(entry.path)) {

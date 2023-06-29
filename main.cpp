@@ -34,10 +34,13 @@ int main(int argc, char** argv)
     QString command = args.takeFirst();
 
     ResourceBundle bundle(path);
-    if (!bundle.init()) {
-        std::cerr << "Unable to load bundle from path: "
-                  << qPrintable(path)
-                  << std::endl;
+    if (!bundle.loadManifest()) {
+        std::cerr << "Failed to load manifest file." << std::endl;
+        return 2;
+    }
+
+    if (!bundle.scanFiles()) {
+        std::cerr << "Failed to scan bundle directory." << std::endl;
         return 2;
     }
 

@@ -28,8 +28,11 @@ class ResourceBundleManifest
 public:
     ResourceBundleManifest(const QString &manifestPath);
 
+    bool exists();
     bool load();
     bool save();
+    bool addEntry(const FileEntry &entry);
+    bool removeEntry(const QString &path);
     bool addTag   (const QString &path, const QString &tag);
     bool removeTag(const QString &path, const QString &tag);
     QDomDocument toXML();

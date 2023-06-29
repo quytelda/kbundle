@@ -5,6 +5,11 @@ ResourceBundleManifest::ResourceBundleManifest(const QString &manifestPath)
 {
 }
 
+bool ResourceBundleManifest::exists()
+{
+    return manifestFile.exists();
+}
+
 bool ResourceBundleManifest::load()
 {
     if (!manifestFile.open(QIODevice::ReadOnly)) {
@@ -60,6 +65,23 @@ bool ResourceBundleManifest::save()
     manifestFile.close();
 
     return true;
+}
+
+bool ResourceBundleManifest::addEntry(const FileEntry &entry)
+{
+    if (entries.contains(entry.path)) {
+        return false;
+    }
+
+    std::cout << showFileEntry(entry) << std::endl;
+    entries.insert(entry.path, entry);
+    return true;
+}
+
+bool ResourceBundleManifest::removeEntry(const QString &path)
+{
+    int removed = entries.remove(path);
+    return (removed == 1);
 }
 
 QDomDocument ResourceBundleManifest::toXML()

@@ -35,8 +35,7 @@ int main(int argc, char** argv)
 
     ResourceBundle bundle(path);
     if (!bundle.loadManifest()) {
-        std::cerr << "Failed to load manifest file." << std::endl;
-        return 2;
+        std::cerr << "Warning: Unable to load an existing manifest." << std::endl;
     }
 
     if (!bundle.scanFiles()) {

@@ -132,7 +132,7 @@ bool ResourceBundle::build(const QString &path)
         goto exit;
     }
 
-    if (!zipAddFile("META-INF/manifest.xml")) {
+    if (!zipAddFile(MANIFEST_PATH)) {
         goto exit;
     }
 

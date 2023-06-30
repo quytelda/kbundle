@@ -74,26 +74,24 @@ bool ResourceBundle::scanFiles()
 
 bool ResourceBundle::updateManifest()
 {
-    if (resourceFiles.size() <= 0) {
+    if (resourceFiles.isEmpty()) {
         return false;
     }
 
     manifest->clear();
 
     for (QFileInfo info : resourceFiles) {
-        QString filePath  = info.filePath();
-        QString mediaType = info.dir().dirName();
-        QString path      = resourcePath(filePath);
-        QString md5sum;
+        QString path = info.filePath();
 
-        QFile file(filePath);
+        QFile file(path);
+        QString md5sum;
         if (!md5(file, &md5sum)) {
             return false;
         }
 
         FileEntry entry = {
-            .path      = path,
-            .mediaType = mediaType,
+            .path      = resourcePath(path),
+            .mediaType = info.dir().dirName(),
             .md5sum    = md5sum,
             .tags      = QStringList(),
         };

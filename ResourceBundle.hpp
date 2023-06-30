@@ -52,15 +52,15 @@ public:
     bool loadManifest();
     bool saveManifest();
     bool updateManifest();
-    bool addTag   (const QString &rpath, const QString &tagName);
-    bool removeTag(const QString &rpath, const QString &tagName);
+    bool addTag   (const QString &rpath, const QString &tag);
+    bool removeTag(const QString &rpath, const QString &tag);
     bool build(const QString &path);
 
 private:
     QString filePath    (const QString &rpath);
     QString resourcePath(const QString &path);
 
-    bool zipAddFile(const QString &path);
+    bool zipAddFile(const QString &rpath);
 
     QDir root;
     ResourceBundleManifest *manifest = nullptr;

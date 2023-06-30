@@ -177,16 +177,16 @@ QString ResourceBundle::resourcePath(const QString &path)
     return root.relativeFilePath(path);
 }
 
-bool ResourceBundle::zipAddFile(const QString &path)
+bool ResourceBundle::zipAddFile(const QString &rpath)
 {
     if (!archive || archive->getMode() == QuaZip::mdNotOpen) {
         return false;
     }
 
-    QString fullPath = filePath(path);
-    if (!QFileInfo::exists(fullPath)) {
+    QString externalPath = filePath(rpath);
+    if (!QFileInfo::exists(externalPath)) {
         return false;
     }
 
-    return JlCompress::compressFile(archive, fullPath, path);
+    return JlCompress::compressFile(archive, externalPath, rpath);
 }

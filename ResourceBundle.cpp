@@ -105,15 +105,17 @@ bool ResourceBundle::updateManifest()
     return saveManifest();
 }
 
-bool ResourceBundle::addTag(const QString &path, const QString &tagName)
+bool ResourceBundle::addTag(const QString &path, const QString &tag)
 {
-    return manifest->addTag(path, tagName)
+    QString rpath = resourcePath(path);
+    return manifest->addTag(rpath, tag)
         && saveManifest();
 }
 
-bool ResourceBundle::removeTag(const QString &path, const QString &tagName)
+bool ResourceBundle::removeTag(const QString &path, const QString &tag)
 {
-    return manifest->removeTag(path, tagName)
+    QString rpath = resourcePath(path);
+    return manifest->removeTag(rpath, tag)
         && saveManifest();
 }
 

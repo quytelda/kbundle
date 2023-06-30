@@ -62,7 +62,7 @@ private:
 
     bool zipAddFile(const QString &path);
 
-    QDir *root = nullptr;
+    QDir root;
     ResourceBundleManifest *manifest = nullptr;
     QFileInfoList resourceFiles;
     QuaZip *archive = nullptr;

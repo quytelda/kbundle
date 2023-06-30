@@ -19,16 +19,14 @@
 #include "ResourceBundle.hpp"
 
 ResourceBundle::ResourceBundle(const QString &path)
+    : root(path)
 {
-    this->root = new QDir(path);
-
-    QString manifestPath = root->filePath(MANIFEST_PATH);
+    QString manifestPath = root.filePath(MANIFEST_PATH);
     this->manifest = new ResourceBundleManifest(manifestPath);
 }
 
 ResourceBundle::~ResourceBundle()
 {
-    delete root;
     delete manifest;
     delete archive;
 }
@@ -58,12 +56,12 @@ bool ResourceBundle::saveManifest()
 
 bool ResourceBundle::scanFiles()
 {
-    if (!root->exists()) {
+    if (!root.exists()) {
         return false;
     }
 
     for (QString dirName : resourceDirNames) {
-        QDir dir(root->absoluteFilePath(dirName));
+        QDir dir(root.absoluteFilePath(dirName));
         if (!dir.exists()) {
             continue;
         }
@@ -168,12 +166,12 @@ exit:
 
 QString ResourceBundle::filePath(const QString &rpath)
 {
-    return root->filePath(rpath);
+    return root.filePath(rpath);
 }
 
 QString ResourceBundle::resourcePath(const QString &path)
 {
-    return root->relativeFilePath(path);
+    return root.relativeFilePath(path);
 }
 
 bool ResourceBundle::zipAddFile(const QString &path)

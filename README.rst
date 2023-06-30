@@ -9,12 +9,12 @@ could keep the bundle contents in a Git repository and quickly
 rebuild the ``.bundle`` file whenever you change something.
 
 .. note:: This is a first draft! It works for me, but there's still
-	  some quirks to smooth out.
+	  some quirks to smooth out. Pull requests are welcome :)
 
 Usage
 =====
 
-The utility accepts a subcommand and some number of arguments. If the
+The program accepts a subcommand and some number of arguments. If the
 root directory of the bundle tree isn't the current directory, an
 alternate path can be specified using ``-r <DIR>``::
 
@@ -33,24 +33,20 @@ Recognized commands are:
   ``<FILE>``. The file must be listed in the manifest and have the
   given tag.
 
-.. note:: Currently, the path provided to add-tag/remove-tag needs to
-	  match the relevant manifest entry's ``full_path`` attribute
-	  exactly (i.e. ``paintoppresets/my_preset.kpp``). This will
-	  probably change in the future.
-
 Example
 =======
 
-Suppose ``example.bundle`` is an existing bundle file, created in
+Suppose ``example.bundle`` is an existing bundle file created in
 Krita. Since the bundle is actually a ZIP archive, we can unzip the
-contents into the local directory. The unzipped files are read-only,
-so we need to fix the permissions if we want to make changes::
+contents into a local directory::
 
   $ mkdir example && cd example
   $ unzip ../example.bundle
   $ ls
   brushes  META-INF  meta.xml  mimetype  paintoppresets  preview.png
-  $ chmod -R u+w *
+
+The unzipped files are read-only, so we need to change the permissions
+before making any changes: ``chmod -R u+w *``
 
 Now we can manage the contents of the bundle as files on our
 filesystem. For example, we could add a new preset file and quickly
@@ -63,17 +59,19 @@ rebuild the bundle::
 Now we have a new bundle file ``example_v2.bundle`` that includes the
 new preset.
 
-We can also add or remove tags to resources in the bundle. Note that
-the resource must already be listed in the manifest, so if you just
-added a resource, run ``kbundle update`` first::
+We can also add and remove tags for resources in the bundle::
 
-  kbundle add-tag Digital paintoppresets/my_preset.kpp
-  kbundle remove-tag Sketch paintoppresets/my_pen_preset.kpp
+  $ kbundle add-tag Digital paintoppresets/my_preset.kpp
+  $ kbundle remove-tag Sketch paintoppresets/my_pen_preset.kpp
+
+.. note:: Currently, resources need to be added to the manifest
+	  before they can be tagged. Make sure to run ``kbundle
+	  update`` after adding new resources.
 
 Building
 ========
 
-The program depends on Qt 5 (QtCore and QtXml) and Quazip, which are
+The program depends on Qt 5 (QtCore and QtXml) and QuaZip, which are
 also build dependencies for Krita. On ArchLinux, the relevant packages
 are ``qt5-base`` and ``quazip-qt5``.
 

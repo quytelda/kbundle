@@ -70,17 +70,22 @@ private:
 
 inline bool md5(QFile &file, QString *result)
 {
-    if (!file.open(QIODevice::ReadOnly)) {
-        return false;
-    }
-
+    bool ok = false;
     QCryptographicHash hash(QCryptographicHash::Md5);
-    if(!hash.addData(&file)) {
-        return false;
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        goto exit;
     }
 
+    if(!hash.addData(&file)) {
+        goto exit;
+    }
     *result = QString(hash.result().toHex());
-    return true;
+    ok = true;
+
+exit:
+    file.close();
+    return ok;
 }
 
 #endif /* __RESOURCE_BUNDLE_HPP */

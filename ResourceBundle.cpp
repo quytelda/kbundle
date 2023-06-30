@@ -60,13 +60,18 @@ bool ResourceBundle::scanFiles()
         return false;
     }
 
+    resourceFiles.clear();
+
     for (QString dirName : resourceDirNames) {
-        QDir dir(root.absoluteFilePath(dirName));
+        QDir dir(root.filePath(dirName));
         if (!dir.exists()) {
             continue;
         }
 
-        this->resourceFiles += dir.entryInfoList(QDir::Files);
+        QFileInfoList contents = dir.entryInfoList(QDir::Files);
+        for (QFileInfo info : contents) {
+            resourceFiles.append(info.filePath());
+        }
     }
 
     return true;
@@ -80,9 +85,7 @@ bool ResourceBundle::updateManifest()
 
     manifest->clear();
 
-    for (QFileInfo info : resourceFiles) {
-        QString path = info.filePath();
-
+    for (QString path : resourceFiles) {
         QFile file(path);
         QString md5sum;
         if (!md5(file, &md5sum)) {
@@ -91,7 +94,7 @@ bool ResourceBundle::updateManifest()
 
         FileEntry entry = {
             .path      = resourcePath(path),
-            .mediaType = info.dir().dirName(),
+            .mediaType = QFileInfo(path).dir().dirName(),
             .md5sum    = md5sum,
             .tags      = QStringList(),
         };
@@ -137,8 +140,8 @@ bool ResourceBundle::build(const QString &path)
         goto exit;
     }
 
-    for (QFileInfo info : resourceFiles) {
-        QString rpath = resourcePath(info.filePath());
+    for (QString path : resourceFiles) {
+        QString rpath = resourcePath(path);
         if (!zipAddFile(rpath)) {
             goto exit;
         }

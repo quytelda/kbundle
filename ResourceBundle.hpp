@@ -64,7 +64,7 @@ private:
 
     QDir root;
     ResourceBundleManifest *manifest = nullptr;
-    QFileInfoList resourceFiles;
+    QStringList resourceFiles;
     QuaZip *archive = nullptr;
 };
 

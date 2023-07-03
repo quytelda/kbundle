@@ -11,12 +11,32 @@ rebuild the ``.bundle`` file whenever you change something.
 .. note:: This is a first draft! It works for me, but there's still
 	  some quirks to smooth out. Pull requests are welcome :)
 
+Building
+========
+
+The program depends on Qt 5 (QtCore and QtXml) and QuaZip, which are
+also build dependencies for Krita. On ArchLinux, the relevant packages
+are ``qt5-base`` and ``quazip-qt5``.
+
+You could build the program directly with ``g++`` and ``pkg-config``::
+
+  g++ $(pkg-config --cflags --libs Qt5Xml quazip1-qt5) -fPIC -o kbundle \
+      main.cpp \
+      ResourceBundle.cpp \
+      ResourceBundleManifest.cpp
+
+However, there's also *very* basic Makefile to do this, so you could
+just run ``make`` instead.
+
+After building, you can copy the ``kbundle`` executable somewhere in
+your path.
+
 Usage
 =====
 
-The program accepts a subcommand and some number of arguments. If the
-root directory of the bundle tree isn't the current directory, an
-alternate path can be specified using ``-r <DIR>``::
+The program accepts a subcommand and some number of arguments. You can
+optionally specify a bundle directory path with ``-r <DIR>``,
+otherwise the current directory is used::
 
   kbundle [-r <DIR>] <COMMAND> [ARG]...
 
@@ -46,11 +66,11 @@ contents into a local directory::
   brushes  META-INF  meta.xml  mimetype  paintoppresets  preview.png
 
 The unzipped files are read-only, so we need to change the permissions
-before making any changes: ``chmod -R u+w *``
+before making changes: ``chmod -R u+w *``
 
 Now we can manage the contents of the bundle as files on our
-filesystem. For example, we could add a new preset file and quickly
-rebuild the bundle::
+filesystem. For example, we could add a new preset file and rebuild
+the bundle::
 
   $ cp ~/.local/share/krita/paintoppresets/my_preset.kpp ./paintoppresets/
   $ kbundle update # Update the manifest file to include the new preset.
@@ -67,23 +87,3 @@ We can also add and remove tags for resources in the bundle::
 .. note:: Currently, resources need to be added to the manifest
 	  before they can be tagged. Make sure to run ``kbundle
 	  update`` after adding new resources.
-
-Building
-========
-
-The program depends on Qt 5 (QtCore and QtXml) and QuaZip, which are
-also build dependencies for Krita. On ArchLinux, the relevant packages
-are ``qt5-base`` and ``quazip-qt5``.
-
-You could build the program directly with ``g++`` and ``pkg-config``::
-
-  g++ $(pkg-config --cflags --libs Qt5Xml quazip1-qt5) -fPIC -o kbundle \
-      main.cpp \
-      ResourceBundle.cpp \
-      ResourceBundleManifest.cpp
-
-However, there's also very basic Makefile to do this, so you could
-just run ``make`` instead.
-
-After building, you can copy the ``kbundle`` executable somewhere in
-your path.

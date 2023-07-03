@@ -63,13 +63,34 @@ bool ResourceBundle::scanFiles()
     return true;
 }
 
+bool ResourceBundle::pruneManifest()
+{
+    // Find resources that exist in the manifest but not on disk.
+    QSet<QString> diskFiles;
+    for (const QString path : resourceFiles) {
+        diskFiles.insert(resourcePath(path));
+    }
+    QSet<QString> missingFiles = manifest->resourceList().subtract(diskFiles);
+
+    for (QString path : missingFiles) {
+        std::cout << "Pruning entry from manifest: "
+                  << qPrintable(path)
+                  << std::endl;
+        if (!manifest->removeEntry(path)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool ResourceBundle::updateManifest()
 {
     if (resourceFiles.isEmpty()) {
         return false;
     }
 
-    manifest->clear();
+    pruneManifest();
 
     for (QString path : resourceFiles) {
         QFile file(path);

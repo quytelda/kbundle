@@ -50,6 +50,7 @@ public:
 
     bool scanFiles();
     bool loadManifest();
+    bool pruneManifest();
     bool updateManifest();
     bool addTag   (const QString &rpath, const QString &tag);
     bool removeTag(const QString &rpath, const QString &tag);

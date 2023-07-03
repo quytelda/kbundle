@@ -40,20 +40,6 @@ bool ResourceBundle::loadManifest()
     return manifest->load();
 }
 
-bool ResourceBundle::saveManifest()
-{
-    QFileInfo info = manifest->fileInfo();
-
-    // If the "META-INF" directory doesn't exists, create it.
-    // The manifest file is created when written.
-    QDir dir = info.dir();
-    if (!dir.exists() && !dir.mkdir(".")) {
-        return false;
-    }
-
-    return manifest->save();
-}
-
 bool ResourceBundle::scanFiles()
 {
     if (!root.exists()) {
@@ -103,21 +89,21 @@ bool ResourceBundle::updateManifest()
         }
     }
 
-    return saveManifest();
+    return manifest->save();
 }
 
 bool ResourceBundle::addTag(const QString &path, const QString &tag)
 {
     QString rpath = resourcePath(path);
     return manifest->addTag(rpath, tag)
-        && saveManifest();
+        && manifest->save();
 }
 
 bool ResourceBundle::removeTag(const QString &path, const QString &tag)
 {
     QString rpath = resourcePath(path);
     return manifest->removeTag(rpath, tag)
-        && saveManifest();
+        && manifest->save();
 }
 
 bool ResourceBundle::build(const QString &path)

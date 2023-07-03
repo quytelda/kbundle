@@ -46,7 +46,6 @@ class ResourceBundleManifest
 public:
     ResourceBundleManifest(const QString &manifestPath);
 
-    QFileInfo fileInfo();
     bool exists();
     bool load();
     bool save();

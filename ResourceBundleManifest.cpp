@@ -28,11 +28,6 @@ bool ResourceBundleManifest::exists()
     return manifestFile.exists();
 }
 
-QFileInfo ResourceBundleManifest::fileInfo()
-{
-    return QFileInfo(manifestFile);
-}
-
 bool ResourceBundleManifest::load()
 {
     if (!manifestFile.open(QIODevice::ReadOnly)) {

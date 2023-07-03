@@ -30,9 +30,9 @@ struct FileEntry {
 
 inline const char *showFileEntry(const FileEntry &entry)
 {
-    return qPrintable(entry.path      + ":" +
-                      entry.mediaType + ":" +
-                      entry.md5sum    + ":" +
+    return qPrintable(entry.path      + " : " +
+                      entry.mediaType + " : " +
+                      entry.md5sum    + " : " +
                       entry.tags.join(','));
 }
 

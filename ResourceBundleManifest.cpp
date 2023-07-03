@@ -72,8 +72,19 @@ bool ResourceBundleManifest::load()
 
 bool ResourceBundleManifest::save()
 {
+    // If the "META-INF" directory doesn't exists, create it.
+    // The manifest file is created when written.
+    QDir dir = QFileInfo(manifestFile).dir();
+    if (!dir.exists() && !dir.mkdir(".")) {
+        std::cerr << "Failed to create directory: "
+                  << qPrintable(dir.canonicalPath())
+                  << std::endl;
+        return false;
+    }
+
     if (!manifestFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        std::cerr << "Failed to open manifest file for writing." << std::endl;
+        std::cerr << "Failed to open manifest file for writing."
+                  << std::endl;
         return false;
     }
 

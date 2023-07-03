@@ -50,7 +50,7 @@ public:
     bool load();
     bool save();
     void clear();
-    bool addEntry(const FileEntry &entry);
+    bool addEntry(FileEntry &entry);
     bool removeEntry(const QString &path);
     bool addTag   (const QString &path, const QString &tag);
     bool removeTag(const QString &path, const QString &tag);

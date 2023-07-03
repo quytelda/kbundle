@@ -108,6 +108,7 @@ bool ResourceBundle::updateManifest()
         if (!manifest->addEntry(entry)) {
             return false;
         }
+        std::cout << showFileEntry(entry) << std::endl;
     }
 
     return manifest->save();

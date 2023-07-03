@@ -101,13 +101,13 @@ void ResourceBundleManifest::clear()
     entries.clear();
 }
 
-bool ResourceBundleManifest::addEntry(const FileEntry &entry)
+bool ResourceBundleManifest::addEntry(FileEntry &entry)
 {
+    // Overwrite existing entries, but keep the tags
     if (entries.contains(entry.path)) {
-        return false;
+        entry.tags += entries[entry.path].tags;
     }
 
-    std::cout << showFileEntry(entry) << std::endl;
     entries.insert(entry.path, entry);
     return true;
 }

@@ -144,6 +144,9 @@ QSet<QString> ResourceBundleManifest::resourceList() const
 bool ResourceBundleManifest::addTag(const QString &path, const QString &tag)
 {
     if (!entries.contains(path)) {
+        std::cerr << "No matching entry in manifest: "
+                  << qPrintable(path)
+                  << std::endl;
         return false;
     }
 
@@ -160,6 +163,9 @@ bool ResourceBundleManifest::addTag(const QString &path, const QString &tag)
 bool ResourceBundleManifest::removeTag(const QString &path, const QString &tag)
 {
     if (!entries.contains(path)) {
+        std::cerr << "No matching entry in manifest: "
+                  << qPrintable(path)
+                  << std::endl;
         return false;
     }
 

@@ -67,7 +67,7 @@ bool ResourceBundle::pruneManifest()
 {
     // Find resources that exist in the manifest but not on disk.
     QSet<QString> diskFiles;
-    for (const QString path : resourceFiles) {
+    for (const QString &path : resourceFiles) {
         diskFiles.insert(resourcePath(path));
     }
     QSet<QString> missingFiles = manifest->resourceList().subtract(diskFiles);

@@ -57,8 +57,8 @@ public:
     bool build(const QString &path);
 
 private:
-    QString filePath    (const QString &rpath);
-    QString resourcePath(const QString &path);
+    QString filePath    (const QString &rpath) const;
+    QString resourcePath(const QString &path ) const;
 
     bool zipAddFile(const QString &rpath);
 

@@ -46,7 +46,7 @@ class ResourceBundleManifest
 public:
     ResourceBundleManifest(const QString &manifestPath);
 
-    bool exists();
+    bool exists() const;
     bool load();
     bool save();
     void clear();
@@ -54,14 +54,14 @@ public:
     bool removeEntry(const QString &path);
     bool addTag   (const QString &path, const QString &tag);
     bool removeTag(const QString &path, const QString &tag);
-    QDomDocument toXML();
-    QSet<QString> resourceList();
+    QDomDocument toXML() const;
+    QSet<QString> resourceList() const;
 
 private:
-    bool tagListFromXML(const QDomElement &elem, QStringList *tagList);
-    bool fileEntryFromXML(const QDomElement &elem, FileEntry *entry);
-    QDomElement tagListToXML(QDomDocument &doc, const QStringList &tagList);
-    QDomElement fileEntryToXML(QDomDocument &doc, const FileEntry &entry);
+    bool tagListFromXML  (const QDomElement &elem, QStringList *tagList) const;
+    bool fileEntryFromXML(const QDomElement &elem, FileEntry   *entry  ) const;
+    QDomElement tagListToXML  (QDomDocument &doc, const QStringList &tagList) const;
+    QDomElement fileEntryToXML(QDomDocument &doc, const FileEntry   &entry  ) const;
 
     QFile manifestFile;
     QMap<QString, FileEntry> entries;

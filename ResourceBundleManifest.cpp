@@ -23,7 +23,7 @@ ResourceBundleManifest::ResourceBundleManifest(const QString &manifestPath)
 {
 }
 
-bool ResourceBundleManifest::exists()
+bool ResourceBundleManifest::exists() const
 {
     return manifestFile.exists();
 }
@@ -118,7 +118,7 @@ bool ResourceBundleManifest::removeEntry(const QString &path)
     return (removed == 1);
 }
 
-QDomDocument ResourceBundleManifest::toXML()
+QDomDocument ResourceBundleManifest::toXML() const
 {
     QDomDocument doc;
 
@@ -141,7 +141,7 @@ QDomDocument ResourceBundleManifest::toXML()
     return doc;
 }
 
-QSet<QString> ResourceBundleManifest::resourceList()
+QSet<QString> ResourceBundleManifest::resourceList() const
 {
     return QSet<QString>(entries.keyBegin(), entries.keyEnd());
 }
@@ -172,7 +172,7 @@ bool ResourceBundleManifest::removeTag(const QString &path, const QString &tag)
 }
 
 
-bool ResourceBundleManifest::tagListFromXML(const QDomElement &elem, QStringList *tagList)
+bool ResourceBundleManifest::tagListFromXML(const QDomElement &elem, QStringList *tagList) const
 {
     QDomElement tagsElem = elem.firstChildElement(TAG_TAGS);
     if (tagsElem.isNull()) {
@@ -196,7 +196,7 @@ bool ResourceBundleManifest::tagListFromXML(const QDomElement &elem, QStringList
     return true;
 }
 
-bool ResourceBundleManifest::fileEntryFromXML(const QDomElement &elem, FileEntry *entry)
+bool ResourceBundleManifest::fileEntryFromXML(const QDomElement &elem, FileEntry *entry) const
 {
     if (!entry || elem.tagName() != TAG_FILE_ENTRY) {
         std::cerr << "Failed to parse file entry on line "
@@ -218,7 +218,7 @@ bool ResourceBundleManifest::fileEntryFromXML(const QDomElement &elem, FileEntry
     return true;
 }
 
-QDomElement ResourceBundleManifest::tagListToXML(QDomDocument &doc, const QStringList &tagList)
+QDomElement ResourceBundleManifest::tagListToXML(QDomDocument &doc, const QStringList &tagList) const
 {
     QDomElement tagsElem = doc.createElement(TAG_TAGS);
 
@@ -232,7 +232,7 @@ QDomElement ResourceBundleManifest::tagListToXML(QDomDocument &doc, const QStrin
     return tagsElem;
 }
 
-QDomElement ResourceBundleManifest::fileEntryToXML(QDomDocument &doc, const FileEntry &entry)
+QDomElement ResourceBundleManifest::fileEntryToXML(QDomDocument &doc, const FileEntry &entry) const
 {
     QDomElement entryElem = doc.createElement(TAG_FILE_ENTRY);
 

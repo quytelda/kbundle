@@ -175,12 +175,12 @@ exit:
     return ok;
 }
 
-QString ResourceBundle::filePath(const QString &rpath)
+QString ResourceBundle::filePath(const QString &rpath) const
 {
     return root.filePath(rpath);
 }
 
-QString ResourceBundle::resourcePath(const QString &path)
+QString ResourceBundle::resourcePath(const QString &path) const
 {
     return root.relativeFilePath(path);
 }

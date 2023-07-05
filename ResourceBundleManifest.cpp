@@ -96,11 +96,6 @@ bool ResourceBundleManifest::save()
     return true;
 }
 
-void ResourceBundleManifest::clear()
-{
-    entries.clear();
-}
-
 bool ResourceBundleManifest::addEntry(FileEntry &entry)
 {
     // Overwrite existing entries, but keep the tags

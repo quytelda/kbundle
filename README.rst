@@ -8,6 +8,10 @@ want to manage the files in a bundle outside Krita. For example, you
 could keep the bundle contents in a Git repository and quickly
 rebuild the ``.bundle`` file whenever you change something.
 
+There is also a ``kpp-update-name`` program to set the metadata name
+of a Krita preset file, which is useful for synchronizing with the
+file name.
+
 .. note:: This is a first draft! It works for me, but there's still
 	  some quirks to smooth out. Pull requests are welcome :)
 

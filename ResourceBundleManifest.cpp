@@ -113,6 +113,11 @@ bool ResourceBundleManifest::removeEntry(const QString &path)
     return (removed == 1);
 }
 
+bool ResourceBundleManifest::hasEntry(const QString &path) const
+{
+    return entries.contains(path);
+}
+
 QDomDocument ResourceBundleManifest::toXML() const
 {
     QDomDocument doc;

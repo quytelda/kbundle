@@ -51,6 +51,7 @@ public:
     bool save();
     bool addEntry(FileEntry &entry);
     bool removeEntry(const QString &path);
+    bool hasEntry   (const QString &path) const;
     bool addTag   (const QString &path, const QString &tag);
     bool removeTag(const QString &path, const QString &tag);
     QDomDocument toXML() const;

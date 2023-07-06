@@ -65,9 +65,8 @@ bool ResourceBundle::scanFiles()
             continue;
         }
 
-        QFileInfoList contents = dir.entryInfoList(QDir::Files);
-        for (QFileInfo info : contents) {
-            resourceFiles.append(info.filePath());
+        for (QString name : dir.entryList(QDir::Files)) {
+            resourceFiles.append(dir.filePath(name));
         }
     }
 
@@ -83,8 +82,8 @@ bool ResourceBundle::pruneManifest()
     }
     QSet<QString> missingFiles = manifest->resourceList().subtract(diskFiles);
 
-    for (QString path : missingFiles) {
-        if (!manifest->removeEntry(path)) {
+    for (QString rpath : missingFiles) {
+        if (!manifest->removeEntry(rpath)) {
             return false;
         }
     }
@@ -187,7 +186,7 @@ QString ResourceBundle::externalPath(const QString &rpath) const
 
 QString ResourceBundle::internalPath(const QString &path) const
 {
-    return root.relativeFilePath(path);
+    return root.relativeFilePath(QFileInfo(path).absoluteFilePath());
 }
 
 bool ResourceBundle::zipAddFile(const QString &rpath)

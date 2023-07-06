@@ -49,7 +49,7 @@ public:
     bool exists() const;
     bool load();
     bool save();
-    bool addEntry(FileEntry &entry);
+    void insertEntry(const FileEntry &entry);
     bool removeEntry(const QString &path);
     bool hasEntry   (const QString &path) const;
     bool addTag   (const QString &path, const QString &tag);

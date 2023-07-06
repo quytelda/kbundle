@@ -84,9 +84,6 @@ bool ResourceBundle::pruneManifest()
     QSet<QString> missingFiles = manifest->resourceList().subtract(diskFiles);
 
     for (QString path : missingFiles) {
-        std::cout << "Pruning entry from manifest: "
-                  << qPrintable(path)
-                  << std::endl;
         if (!manifest->removeEntry(path)) {
             return false;
         }
@@ -116,10 +113,7 @@ bool ResourceBundle::updateManifest()
             .md5sum    = md5sum,
             .tags      = QStringList(),
         };
-        if (!manifest->addEntry(entry)) {
-            return false;
-        }
-        std::cout << showFileEntry(entry) << std::endl;
+        manifest->insertEntry(entry);
     }
 
     return manifest->save();

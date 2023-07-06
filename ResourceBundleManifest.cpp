@@ -96,19 +96,28 @@ bool ResourceBundleManifest::save()
     return true;
 }
 
-bool ResourceBundleManifest::addEntry(FileEntry &entry)
+void ResourceBundleManifest::insertEntry(const FileEntry &entry)
 {
-    // Overwrite existing entries, but keep the tags
-    if (entries.contains(entry.path)) {
-        entry.tags += entries[entry.path].tags;
+    bool present = hasEntry(entry.path);
+    std::cout << (present ? "UPDATE: " : "INSERT: ")
+              << qPrintable(entry.path)
+              << std::endl;
+
+    QStringList oldTags;
+    if (present) {
+        oldTags = entries[entry.path].tags;
     }
 
-    entries.insert(entry.path, entry);
-    return true;
+    entries[entry.path]       = entry;
+    entries[entry.path].tags += oldTags;
 }
 
 bool ResourceBundleManifest::removeEntry(const QString &path)
 {
+    std::cout << "REMOVE: "
+              << qPrintable(path)
+              << std::endl;
+
     int removed = entries.remove(path);
     return (removed == 1);
 }

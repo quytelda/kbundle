@@ -52,12 +52,9 @@ int main(int argc, char** argv)
     QString command = args.takeFirst();
 
     ResourceBundle bundle(path);
-    if (!bundle.loadManifest()) {
-        std::cerr << "Warning: Unable to load an existing manifest." << std::endl;
-    }
-
-    if (!bundle.scanFiles()) {
-        std::cerr << "Failed to scan bundle directory." << std::endl;
+    if (!bundle.load()) {
+        std::cerr << "Unable to load bundle."
+                  << std::endl;
         return 2;
     }
 

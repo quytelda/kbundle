@@ -31,18 +31,29 @@ ResourceBundle::~ResourceBundle()
     delete archive;
 }
 
-bool ResourceBundle::loadManifest()
+bool ResourceBundle::load()
 {
-    if (!manifest->exists()) {
+    if (manifest->exists() && !manifest->load()) {
+        std::cerr << "Failed to load manifest file."
+                  << std::endl;
         return false;
     }
 
-    return manifest->load();
+    if (!scanFiles()) {
+        std::cerr << "Failed to scan bundle directory."
+                  << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 bool ResourceBundle::scanFiles()
 {
     if (!root.exists()) {
+        std::cerr << "Bundle directory does not exist: "
+                  << qPrintable(root.path())
+                  << std::endl;
         return false;
     }
 

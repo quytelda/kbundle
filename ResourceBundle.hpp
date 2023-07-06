@@ -49,7 +49,7 @@ public:
     ~ResourceBundle();
 
     bool scanFiles();
-    bool loadManifest();
+    bool load();
     bool pruneManifest();
     bool updateManifest();
     bool addTag   (const QString &path, const QString &tag);

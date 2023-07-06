@@ -30,10 +30,20 @@ You could build the program directly with ``g++`` and ``pkg-config``::
       ResourceBundleManifest.cpp
 
 However, there's also *very* basic Makefile to do this, so you could
-just run ``make`` instead.
+just run ``make`` or ``make kbundle`` instead.
 
 After building, you can copy the ``kbundle`` executable somewhere in
 your path.
+
+kpp-update-name
+---------------
+
+kpp-update-name is just one file, and depends on QtGui and QtXml. You
+can build it with ``make`` or directly with ``g++``::
+
+  g++ $(pkg-config --cflags --libs Qt5Gui Qt5Xml) -fPIC \
+      -o kpp-update-name \
+      kpp-update-name.cpp
 
 Usage
 =====

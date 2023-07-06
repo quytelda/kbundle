@@ -52,13 +52,13 @@ public:
     bool loadManifest();
     bool pruneManifest();
     bool updateManifest();
-    bool addTag   (const QString &rpath, const QString &tag);
-    bool removeTag(const QString &rpath, const QString &tag);
+    bool addTag   (const QString &path, const QString &tag);
+    bool removeTag(const QString &path, const QString &tag);
     bool build(const QString &path);
 
 private:
-    QString filePath    (const QString &rpath) const;
-    QString resourcePath(const QString &path ) const;
+    QString externalPath(const QString &rpath) const;
+    QString internalPath(const QString &path) const;
 
     bool zipAddFile(const QString &rpath);
 

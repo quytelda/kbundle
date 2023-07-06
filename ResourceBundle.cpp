@@ -21,7 +21,7 @@
 ResourceBundle::ResourceBundle(const QString &path)
     : root(path)
 {
-    QString manifestPath = root.filePath(MANIFEST_PATH);
+    QString manifestPath = externalPath(MANIFEST_PATH);
     this->manifest = new ResourceBundleManifest(manifestPath);
 }
 
@@ -49,7 +49,7 @@ bool ResourceBundle::scanFiles()
     resourceFiles.clear();
 
     for (QString dirName : resourceDirNames) {
-        QDir dir(root.filePath(dirName));
+        QDir dir(externalPath(dirName));
         if (!dir.exists()) {
             continue;
         }
@@ -68,7 +68,7 @@ bool ResourceBundle::pruneManifest()
     // Find resources that exist in the manifest but not on disk.
     QSet<QString> diskFiles;
     for (const QString &path : resourceFiles) {
-        diskFiles.insert(resourcePath(path));
+        diskFiles.insert(internalPath(path));
     }
     QSet<QString> missingFiles = manifest->resourceList().subtract(diskFiles);
 
@@ -100,7 +100,7 @@ bool ResourceBundle::updateManifest()
         }
 
         FileEntry entry = {
-            .path      = resourcePath(path),
+            .path      = internalPath(path),
             .mediaType = QFileInfo(path).dir().dirName(),
             .md5sum    = md5sum,
             .tags      = QStringList(),
@@ -116,14 +116,14 @@ bool ResourceBundle::updateManifest()
 
 bool ResourceBundle::addTag(const QString &path, const QString &tag)
 {
-    QString rpath = resourcePath(path);
+    QString rpath = internalPath(path);
     return manifest->addTag(rpath, tag)
         && manifest->save();
 }
 
 bool ResourceBundle::removeTag(const QString &path, const QString &tag)
 {
-    QString rpath = resourcePath(path);
+    QString rpath = internalPath(path);
     return manifest->removeTag(rpath, tag)
         && manifest->save();
 }
@@ -149,7 +149,7 @@ bool ResourceBundle::build(const QString &path)
     }
 
     for (QString path : resourceFiles) {
-        QString rpath = resourcePath(path);
+        QString rpath = internalPath(path);
         if (!zipAddFile(rpath)) {
             goto exit;
         }
@@ -175,12 +175,12 @@ exit:
     return ok;
 }
 
-QString ResourceBundle::filePath(const QString &rpath) const
+QString ResourceBundle::externalPath(const QString &rpath) const
 {
     return root.filePath(rpath);
 }
 
-QString ResourceBundle::resourcePath(const QString &path) const
+QString ResourceBundle::internalPath(const QString &path) const
 {
     return root.relativeFilePath(path);
 }
@@ -191,10 +191,10 @@ bool ResourceBundle::zipAddFile(const QString &rpath)
         return false;
     }
 
-    QString externalPath = filePath(rpath);
-    if (!QFileInfo::exists(externalPath)) {
+    QString path = externalPath(rpath);
+    if (!QFileInfo::exists(path)) {
         return false;
     }
 
-    return JlCompress::compressFile(archive, externalPath, rpath);
+    return JlCompress::compressFile(archive, path, rpath);
 }
